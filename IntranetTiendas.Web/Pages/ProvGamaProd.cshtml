@@ -1,0 +1,88 @@
+@page
+@model ProvGamaProdModel
+@{
+    ViewData["Title"] = "Productos Gama";
+}
+
+<div align="right">
+    <div id="CapaFiltros" style="display:none;">
+        <table width="95%">
+            <tr>
+                <td class="tablamediano">
+                    <form action="/ProvGamaProd" method="get" name="form2" target="_parent">
+                        <div align="left">
+                            <input name="P2" type="hidden" id="P2" value="@Model.P2" size="9" maxlength="9" />
+                            <input name="P3" type="hidden" id="P3" value="@Model.P3" size="3" maxlength="3" />
+                            Incluir Productos Fuera de Coleccion:
+                            <input type="checkbox" name="P4" value="1" />
+                            <input name="Filtrar" type="submit" value="Filtrar" />
+                        </div>
+                    </form>
+                </td>
+                <td class="Titulos" onclick="toggle('CapaFiltros')">Ocultar Filtros</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<table width="30%">
+    <tr>
+        <td onclick="toggle('CapaFiltros')"><img src="~/img/FILTRO.jpg" width="23" height="23" alt="Filtros" /></td>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td width="60%">
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">
+    Productos Proveedor Gama:@Model.P2
+    @if (Model.FueraColeccionActivo)
+    {
+        <span class="info_pequeno">Filtro F.Coleccion Activo</span>
+    }
+</p>
+<table class="datos" width="99%" border="1" align="center" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td width="1%" class="normal"><div><b>Prod.</b></div></td>
+        <td width="0%" class="normal"><div><b>Descripción</b></div></td>
+        <td width="1%" class="normal"><div><b>Referencia</b></div></td>
+        <td width="0%" class="normal"><div><b> Ult.Compra </b></div></td>
+        <td width="0%" class="normal"><div><b>Stock</b></div></td>
+        <td width="0%" class="normal"><div><b>F.Col.</b></div></td>
+    </tr>
+    @foreach (var p in Model.Productos)
+    {
+        var pd = (IDictionary<string, object>)p;
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td><div align="left"><a href="/Producto?P1=@pd["Prod"]">@pd["Prod"]</a></div></td>
+            <td><div align="left">@pd["DescProdCompleta"]</div></td>
+            <td><div align="left">@pd["ProdProveedor"]</div></td>
+            <td><div align="center">@pd["FechaUltCompra"]</div></td>
+            <td><div align="right">@pd["Stock"]</div></td>
+            <td>
+                <div align="center">
+                    @if (pd["FueraColeccion"] is bool fc && fc)
+                    {
+                        <text>X</text>
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+@if (Model.Cont >= 50)
+{
+    <table width="100%" height="5" border="0">
+        <tr>
+            <td><a href="javascript:history.back();">Volver</a></td>
+            <td>
+                <div align="right">
+                    <a href="/ProvGamaProd?P2=@Model.P2&P3=@Model.UltimoProd&P4=@Model.P4">Siguiente Pagina &gt;&gt;</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+}

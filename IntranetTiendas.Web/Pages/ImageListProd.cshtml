@@ -1,0 +1,23 @@
+@page
+@model ImageListProdModel
+@{
+    ViewData["Title"] = "Imágenes Producto";
+}
+<div align="center">
+    <table border="0">
+        @foreach (var r in Model.Imagenes)
+        {
+            var d = (IDictionary<string, object>)r;
+            <tr>
+                <td align="center">
+                    <a href="/ImageProd?Cont=@d["Cont"]&SizeImage=255&Ean=@d["Ean"]&FA=@d["FA"]">
+                        <img src="/ImageProd?SizeImage=1&Ean=@d["Ean"]&FA=@d["FA"]" border="0" alt="@d["Ean"]" />
+                    </a>
+                </td>
+            </tr>
+            <tr><td class="Negrita" align="center">@d["Ean"]</td></tr>
+            <tr><td class="Negrita" align="center">@d["Kb"] Kb.</td></tr>
+            <tr><td class="info_pequeno" align="center">@d["Url"]</td></tr>
+        }
+    </table>
+</div>

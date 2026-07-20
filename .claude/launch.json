@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "intranet",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["bin\\Debug\\net10.0\\IntranetTiendas.Web.dll", "--urls", "http://localhost:5599"],
+      "cwd": "IntranetTiendas.Web",
+      "port": 5599
+    }
+  ]
+}

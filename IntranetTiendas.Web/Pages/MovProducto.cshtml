@@ -1,0 +1,101 @@
+@page
+@model MovProductoModel
+@{
+    ViewData["Title"] = "Mov. Producto";
+    var hayStock = !string.IsNullOrEmpty(Model.P3);
+    var stockRun = MovProductoModel.Dec(Model.P3);
+    var min = MovProductoModel.Dec(Model.P4);
+    var max = MovProductoModel.Dec(Model.P5);
+    var hayMinMax = !string.IsNullOrEmpty(Model.P4) && max > 0;
+}
+
+<table width="100%">
+    <tr>
+        <td width="90%"></td>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td width="60%">
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="info">
+    Prod:@Model.P1 - Alm:@Model.AlmMov
+    @if (!string.IsNullOrEmpty(Model.P3)) { <text> - Stock:@Model.P3 </text> }
+    @if (!string.IsNullOrEmpty(Model.P4)) { <text> - Min:@Model.P4 </text> }
+    @if (!string.IsNullOrEmpty(Model.P5)) { <text> - Max:@Model.P5 </text> }
+</p>
+<div align="center" class="info">
+    @Model.P6
+</div>
+
+<table class="datos" width="30%" border="1" align="center" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td width="0%" nowrap class="normal"><div><div align="center"><b>Fecha</b></div></div></td>
+        <td width="0%" nowrap class="normal"><div><div align="center"><b>Tipo Mov </b></div></div></td>
+        <td width="0%" nowrap class="normal"><div><b>Cant</b></div></td>
+        @if (hayStock)
+        {
+            <td width="0%" nowrap class="normal"><div><b>Stock</b></div></td>
+        }
+    </tr>
+    @foreach (var m in Model.Movimientos)
+    {
+        var md = (IDictionary<string, object>)m;
+        var tipo = $"{md["Tipo"]}";
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td width="5%" nowrap><div align="center">@md["Fecha"]</div></td>
+            <td width="5%" nowrap>
+                <div align="left">
+                    @if (tipo == "0")
+                    {
+                        <text>Compra</text>
+                    }
+                    else if (tipo == "1")
+                    {
+                        <text>Venta</text>
+                    }
+                    else if (tipo == "2")
+                    {
+                        <text>Inventario</text>
+                    }
+                    else if (tipo == "3")
+                    {
+                        <text>Ajuste @md["Doc"]</text>
+                    }
+                    else if (tipo == "4")
+                    {
+                        <text>Traspaso (Alm:@md["OtroAlm"])</text>
+                        <a href="/TraspasosLin?P2=@md["Fecha"]&P3=@md["Doc"]">@md["Doc"] &gt;&gt;</a>
+                    }
+                    else if (tipo == "5")
+                    {
+                        <text>Lotes</text>
+                    }
+                    else
+                    {
+                        <text>No def.</text>
+                    }
+                </div>
+            </td>
+            <td width="5%">
+                <div align="right">@md["Cant"]</div>
+            </td>
+            @if (hayStock)
+            {
+                var clase = hayMinMax
+                    ? (stockRun > max ? "stock-exceso" : stockRun < min ? "stock-falta" : "")
+                    : "";
+                <td width="5%" class="@clase"><div align="right">@stockRun</div></td>
+                stockRun -= Convert.ToDecimal(md["Cant"]);
+            }
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+    </tr>
+</table>

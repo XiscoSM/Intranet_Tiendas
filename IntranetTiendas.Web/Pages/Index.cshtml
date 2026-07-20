@@ -1,0 +1,84 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Intranet Tiendas";
+}
+
+@if (Model.ComunicadosPendientes > 0)
+{
+    <a class="aviso" href="/Comunicados">
+        <img src="~/img/mail.jpg" width="25" height="25" alt="Comunicados" />
+        Tiene @Model.ComunicadosPendientes comunicados pendientes de leer
+    </a>
+}
+
+<p class="Titulos">¿Qué quieres hacer?</p>
+
+<div class="menu-grid">
+    <a class="menu-card" href="/InventarioCab">
+        <span class="menu-title">Inventarios</span>
+        <span class="menu-desc">Recuentos y diferencias</span>
+    </a>
+    <a class="menu-card" href="/ComprasCab">
+        <span class="menu-title">Albaranes</span>
+        <span class="menu-desc">Compras recibidas</span>
+    </a>
+    <a class="menu-card" href="/PedidosCompraCab">
+        <span class="menu-title">Pedidos Proveedor</span>
+        <span class="menu-desc">Pedidos de compra</span>
+    </a>
+    <a class="menu-card" href="/PedidosCentralDirecto">
+        <span class="menu-title">Pedidos a Centro Dist.</span>
+        <span class="menu-desc">Pedidos a la central</span>
+    </a>
+    <a class="menu-card" href="/TraspasosCab">
+        <span class="menu-title">Traspasos</span>
+        <span class="menu-desc">Movimientos entre almacenes</span>
+    </a>
+    <a class="menu-card" href="/InfoEtiquetas">
+        <span class="menu-title">Info. Etiquetas</span>
+        <span class="menu-desc">Etiquetado de productos</span>
+    </a>
+    <a class="menu-card" href="/Comunicados">
+        <span class="menu-title">Comunicados</span>
+        <span class="menu-desc">Avisos de central</span>
+    </a>
+    <a class="menu-card" href="/InformeManualCab">
+        <span class="menu-title">Listados</span>
+        <span class="menu-desc">Informes manuales</span>
+    </a>
+    <a class="menu-card" href="/InformeCierre">
+        <span class="menu-title">Informe Cierre</span>
+        <span class="menu-desc">Cierre diario de tienda</span>
+    </a>
+    <a class="menu-card" href="/InformeBalanzas">
+        <span class="menu-title">Informe Balanzas</span>
+        <span class="menu-desc">Ventas por balanza</span>
+    </a>
+    <a class="menu-card" href="/AjustesCab">
+        <span class="menu-title">Ajustes</span>
+        <span class="menu-desc">Regularizaciones de stock</span>
+    </a>
+    <a class="menu-card" href="/MovFechaProgLin">
+        <span class="menu-title">Movimientos Sección</span>
+        <span class="menu-desc">Entradas y salidas por día</span>
+    </a>
+    <a class="menu-card" href="/RevisionStockProds">
+        <span class="menu-title">Revisión Stock</span>
+        <span class="menu-desc">Productos a revisar</span>
+    </a>
+</div>
+
+<form action="/ProvGamaProd" method="get" class="buscador" style="justify-content:flex-start">
+    <label for="gama">Listado Gama</label>
+    <input id="gama" name="P2" type="text" size="8" maxlength="8" placeholder="Nº gama" />
+    <input type="submit" value="Buscar" />
+</form>
+
+<br />
+<p class="normal"><b>Incidencias Informática</b> — Telf.: 971 551 062 · Ext. abreviada 1015</p>
+<p class="info_pequeno">Horario habitual días no festivos hasta las 20h. · Emergencias: 670 312 394</p>
+<p class="info_pequeno">
+    <a href="/docs/Terminos de uso.pdf" target="_blank">Términos de uso y privacidad</a> ·
+    <a href="/docs/InfoProteccionDatos.pdf" target="_blank">Información de protección de datos</a>
+</p>

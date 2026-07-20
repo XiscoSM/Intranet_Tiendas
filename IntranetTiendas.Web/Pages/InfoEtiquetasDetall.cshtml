@@ -1,0 +1,28 @@
+@page
+@model InfoEtiquetasDetallModel
+@{
+    ViewData["Title"] = "Etiquetas";
+}
+
+<p class="Titulos">Estimación Etiquetas @Model.P1 - Tienda: @Model.Alm</p>
+<table class="datos" border="0" align="center" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td width="0%" bordercolor="#000000" class="normal"></td>
+        <td>
+            <div align="center"><b>Etiqs</b></div>
+        </td>
+    </tr>
+    @foreach (var e in Model.Detalle)
+    {
+        var ed = (IDictionary<string, object>)e;
+        <tr bordercolor="#FFFFFF" class="tabla">
+            <td width="0%">@ed["Agrup"]</td>
+            <td><div align="right">@ed["Etiqs"]</div></td>
+        </tr>
+    }
+    <tr>
+        <td width="0%"></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>

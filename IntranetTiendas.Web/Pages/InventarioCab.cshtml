@@ -1,0 +1,61 @@
+@page
+@model InventarioCabModel
+@{
+    ViewData["Title"] = "Inventarios";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">INVENTARIOS</p>
+<table class="datos" width="98%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="10%" class="normal"><div>Fecha</div></td>
+        <td width="13%" class="normal"><div><b>Programa</b></div></td>
+        <td width="7%" class="normal"><div><b>Prods</b></div></td>
+        <td width="15%" class="normal"><div><b>Importe</b></div></td>
+        <td width="15%" class="normal"><div><b>Importe</b> Dif.</div></td>
+        <td width="10%" class="normal"><div><b>Reg.</b></div></td>
+    </tr>
+    @foreach (var r in Model.Inventarios)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%">@d["Fecha"]</td>
+            <td width="13%">
+                <div align="left">
+                    <a href="/InventariosLin?P2=@d["Fecha"]&P3=@d["Prog"]">@d["DescProg"] &gt;&gt;</a>
+                </div>
+            </td>
+            <td><div align="right">@d["Prods"]</div></td>
+            <td><div align="right">@Model.Moneda(d["ImporteCosteFisico"])</div></td>
+            <td><div align="right">@Model.Moneda(d["ImporteCosteDif"])</div></td>
+            <td>
+                <div align="center">
+                    @if (d["Reg"] is bool reg && reg)
+                    {
+                        <span class="tablaMediano">Si</span>
+                    }
+                    else
+                    {
+                        <span class="tablaRojo">No</span>
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+        <td><div align="right"><a href="/InventarioCab?P2=@Model.UltimaFecha">Siguiente Pagina &gt;&gt;</a></div></td>
+    </tr>
+</table>

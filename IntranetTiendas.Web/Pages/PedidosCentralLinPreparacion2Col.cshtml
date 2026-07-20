@@ -1,0 +1,51 @@
+@page
+@model PedidosCentralLinPreparacion2ColModel
+@{
+    ViewData["Title"] = "Pedido Central Detalle";
+}
+
+<style>
+    .Estilo4 { font-size: 18px; }
+</style>
+
+<table width="100%" class="datos">
+    <tr class="CabeceraTablas">
+        <td nowrap class="normal"><div><b>Ubic.</b></div></td>
+        <td nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td nowrap class="normal"><div>U/C</div></td>
+        <td nowrap class="normal"><div><b>Cajas</b></div></td>
+        <td nowrap class="normal"><div><b>Cant</b></div></td>
+        <td nowrap class="normal"><div><b>&lt;&lt;&lt;&gt;&gt;&gt;</b></div></td>
+        <td nowrap class="normal"><div><b>Ubic.</b></div></td>
+        <td nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td nowrap class="normal"><div>U/C</div></td>
+        <td nowrap class="normal"><div><b>Cajas</b></div></td>
+        <td nowrap class="normal"><div><b>Cant</b></div></td>
+        <td nowrap class="normal"><div><b>&lt;&lt;&lt;&gt;&gt;&gt;</b></div></td>
+    </tr>
+    @for (var i = 0; i < Model.Lineas.Count; i += 2)
+    {
+        var a = (IDictionary<string, object>)Model.Lineas[i];
+        var b = i + 1 < Model.Lineas.Count ? (IDictionary<string, object>?)Model.Lineas[i + 1] : null;
+        <tr class="tablamediano">
+            <td width="70" height="40"><div align="left" class="tabla"> @a["Ubicacion"]</div></td>
+            <td width="400" height="40">
+                <div align="left" class="Estilo4">@(a["DescProdCompleta"])(@(a["Stock"])u.)</div>
+            </td>
+            <td width="30" height="40"><div align="right" class="Estilo4">@a["UnidsCaja"]</div></td>
+            <td width="30" height="40"><div align="right" class="Estilo4"> @a["CajasPedidas"]</div></td>
+            <td height="40"><div align="right" class="Estilo4"> @a["CantPedida"]</div></td>
+            @if (b is not null)
+            {
+                <td height="40"></td>
+                <td width="70" height="40"><div align="left" class="tabla"> @b["Ubicacion"]</div></td>
+                <td width="400" height="40">
+                    <div align="left" class="Estilo4">@(b["DescProdCompleta"])(@(b["Stock"])u.)</div>
+                </td>
+                <td width="30" height="40"><div align="right" class="Estilo4">@b["UnidsCaja"]</div></td>
+                <td width="30" height="40"><div align="right" class="Estilo4"> @b["CajasPedidas"]</div></td>
+                <td height="40"><div align="right" class="Estilo4"> @b["CantPedida"]</div></td>
+            }
+        </tr>
+    }
+</table>

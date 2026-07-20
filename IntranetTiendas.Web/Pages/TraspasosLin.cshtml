@@ -1,0 +1,124 @@
+@page
+@model TraspasosLinModel
+@{
+    ViewData["Title"] = "Traspaso Detalle";
+}
+
+<style type="text/css">
+    .Estilo1 { font-size: 16px }
+    .Estilo2 { font-style: normal; font-weight: bold; color: #0066FF; background-color: #FFFFFF; background-position: center; text-align: center; font-family: Arial, Helvetica, sans-serif; }
+    .Estilo3 { font-size: 12px }
+</style>
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+@if (Model.Cab is not null)
+{
+    var c = (IDictionary<string, object>)Model.Cab!;
+    var reg = $"{c["Reg"]}" is "False" or "0";
+    <table width="100%" border="0">
+        <tr class="info_pequeno">
+            <td width="35%">
+                @c["Empresa"] (@c["CIF"])<br />
+                Alm.Origen: @c["AlmOrigen"] - @c["DescAlmOrigen"]<br />
+                Dirección: @c["DireccionAlmOrigen"] - @c["PoblacionAlmOrigen"]<br />
+                @c["DesProvinciaAlmOrigen"] - Telf.:@c["TelefonoAlmOrigen"]<br />
+            </td>
+            <td class="info Estilo1">
+                <p align="center" class="Estilo2">
+                    <span class="Estilo3">
+                        Traspaso @Model.P3 @Model.P2<br />
+                        Destino: @c["AlmDestino"] - @c["DescAlmDestino"]<br />
+                    </span>
+                </p>
+                @if (reg)
+                {
+                    <text>NO REGISTRADO</text>
+                }
+            </td>
+            <td width="35%">
+                <div align="right">
+                    @c["Empresa"] (@c["CIF"])<br />
+                    Alm.Destino: @c["AlmDestino"] - @c["DescAlmDestino"]<br />
+                    Dirección:@c["DireccionAlmDestino"] - @c["PoblacionAlmDestino"]<br />
+                    @c["DesProvinciaAlmDest"] - Telf.:@c["TelefonoAlmDestino"]<br />
+                </div>
+            </td>
+        </tr>
+    </table>
+    @if ($"{c["Tipo"]}" == "1" || $"{c["AlmOrigen"]}" == "9" || $"{c["AlmOrigen"]}" == "43")
+    {
+        <table width="100%" border="1">
+            <tr>
+                <td class="tablapeq">Temperatura: </td>
+                <td class="tablapeq">Estiba: </td>
+                <td class="tablapeq">Limpieza: </td>
+                <td class="tablapeq">Caducidad: </td>
+                <td class="tablapeq">Envases: </td>
+            </tr>
+            <tr>
+                <td class="tablapeq">Registro:@c["RegistroSanitario"]</td>
+                <td colspan="2" class="tablapeq">Observaciones:</td>
+                <td colspan="2" class="tablapeq">Firma:</td>
+            </tr>
+        </table>
+    }
+}
+
+<table class="datos" width="98%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="10%" nowrap class="normal"><div align="center">Prod</div></td>
+        <td width="10%" nowrap class="normal"><div><b>Ean</b>/Lote</div></td>
+        <td width="50%" nowrap class="normal"><div><b>Descripción</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cajas</b></div></td>
+        <td width="5%" nowrap class="normal"><div align="center">U/C</div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant</b></div></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        var tieneEan = decimal.TryParse($"{d["Ean"]}", out var ean) && ean > 0;
+        var lote = $"{d["Lote"]}";
+        <tr class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="right"><a href="/Producto?P1=@d["Prod"]">@d["Prod"]</a></div>
+            </td>
+            <td width="10%" nowrap>
+                @if (tieneEan)
+                {
+                    <div align="right">@d["Ean"]</div>
+                }
+                else
+                {
+                    <div align="left">@if (lote != "") {<text>L:@lote</text>}</div>
+                }
+            </td>
+            <td width="50%" nowrap>
+                <div align="left">
+                    @d["DescProdCompleta"]
+                    @if (lote != "" && tieneEan)
+                    {
+                        <text>L:@lote</text>
+                    }
+                </div>
+            </td>
+            <td width="5%" nowrap><div align="right">@d["Cajas"]</div></td>
+            <td width="5%" nowrap><div align="center">@d["UnidsCaja"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cant"]</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+    </tr>
+</table>

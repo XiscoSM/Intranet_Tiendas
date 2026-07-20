@@ -1,0 +1,62 @@
+@page
+@model InformeManualCabModel
+@{
+    ViewData["Title"] = "Informes";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">INFORMES</p>
+<table width="98%" border="1" align="center" class="datos">
+    <tr class="CabeceraTablas">
+        <td width="10%" class="normal"><div align="center">Fecha</div></td>
+        <td width="13%" class="normal"><div><b>Informe</b></div></td>
+        <td width="12%" class="normal">Tipo</td>
+        <td width="12%" class="normal"><div><b>Alm.Origen</b></div></td>
+        <td width="20%" class="normal"><div><b>Alm.Dest</b></div></td>
+        <td width="7%" class="normal"><div><b>Prods</b></div></td>
+        <td width="13%" class="normal"><div><b>User</b></div></td>
+    </tr>
+    @foreach (var r in Model.Informes)
+    {
+        var d = (IDictionary<string, object>)r;
+        var text = $"{d["DescTipo"]}  {d["AlmOrigen"]}-{d["DescAlmOrigen"]} >> {d["AlmDest"]}-{d["DescAlmDest"]}";
+        var mismoAlm = Convert.ToDouble(d["AlmOrigen"]) == Model.Alm;
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td width="10%"><div align="center">@d["Fecha"]</div></td>
+            <td width="13%">
+                <div align="center">
+                    <a href="/InformeManualLin@(d["Tipo"])?P2=@Uri.EscapeDataString($"{d["Fecha"]}")&P3=@d["Informe"]&Text=@Uri.EscapeDataString(text)">@d["Informe"] &gt;&gt;</a>
+                </div>
+            </td>
+            <td width="12%">@d["DescTipo"]</td>
+            <td width="12%"><div align="center">@d["AlmOrigen"]</div></td>
+            <td width="20%">
+                <div align="center">
+                    <span class="@(mismoAlm ? "tablaMediano" : "tablaMedianoRojo")">@d["AlmDest"]</span>
+                </div>
+            </td>
+            <td><div align="right">@d["Lineas"]</div></td>
+            <td><div align="center">@d["Usuario"]</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+        <td>
+            <div align="right">
+                <a href="/InformeManualCab?P2=@Uri.EscapeDataString(Model.SigP2)&P3=@Model.SigP3">Siguiente Pagina &gt;&gt;</a>
+            </div>
+        </td>
+    </tr>
+</table>

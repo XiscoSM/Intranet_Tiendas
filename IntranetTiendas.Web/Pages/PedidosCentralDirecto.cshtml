@@ -1,0 +1,125 @@
+@page
+@model PedidosCentralDirectoModel
+@{
+    ViewData["Title"] = "PedidoCentral";
+    string F(object? v) => v is DateTime dt ? dt.ToString("dd/MM/yyyy") : $"{v}";
+}
+
+<style>
+    .Estilo1 { color: #FFFFFF; }
+</style>
+
+<div align="right">
+    <div id="CapaFiltros" style="display:none;">
+        <table width="23%">
+            <tr>
+                <td>Aquí se encontrarían los posibles filtros (parámetros)</td>
+                <td>&nbsp;</td>
+                <td>O información de los filtros aplicados</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td></td>
+                <td class="Titulos" onclick="toggle('CapaFiltros')">Ocultar Filtros</td>
+            </tr>
+        </table>
+    </div>
+
+    <table width="30%">
+        <tr>
+            <td onclick="toggle('CapaFiltros')"><img src="~/img/FILTRO.jpg" width="23" height="23" alt="Filtros" /></td>
+            <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+            <td width="60%">
+                <div align="right">
+                    <span class="info_pequeno">@Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <p align="center" class="Titulos">Pedido Central</p>
+    <table width="98%" align="center" class="datos">
+        <tr class="CabeceraTablas">
+            <td width="0" class="normal"><div><b>Fecha</b></div></td>
+            <td width="20%" class="normal"><div><b>Alm.Central</b></div></td>
+            <td width="0" class="normal"><div align="center"><b>Pedido</b></div></td>
+            <td width="0" class="normal"><div><b>Almacén</b></div></td>
+            <td width="0" class="normal"><div><b>Estado</b></div></td>
+            <td width="0" class="normal"><div><b>Cierre</b></div></td>
+            <td width="0" class="normal"><div><b>User</b></div></td>
+        </tr>
+        @{
+            string? fechaPed = null;
+        }
+        @foreach (var r in Model.Pedidos)
+        {
+            var d = (IDictionary<string, object>)r;
+            var fecha = F(d["Fecha"]);
+            var cierre = d["FechaHoraCierre"];
+            var sinCierre = cierre is DateTime c && c.Year == 1753;
+
+            @* Fila separadora al cambiar de fecha (como en el ASP original) *@
+            if (fechaPed != fecha)
+            {
+                <tr><td></td><td><span class="Estilo1">. </span></td></tr>
+            }
+            fechaPed = fecha;
+
+            <tr class="tablamediano">
+                <td width="0">
+                    <div align="center">
+                        <a href="/PedidosCentralLinPreparacion?P2=@fecha&P3=@d["Pedido"]">@fecha</a>
+                        <a href="/PedidosCentralLinPreparacion?P2=@fecha&P3=@d["Pedido"]">&gt;&gt;</a>
+                    </div>
+                </td>
+                <td width="0">
+                    <div align="left">
+                        <a href="/PedidosCentralLinAlm?P4=3&P3=@d["Estado"]&P2=@fecha">@d["AlmCentral"]-@d["DescAlmCentral"]</a>
+                    </div>
+                </td>
+                <td width="0">
+                    <div align="center">
+                        <a href="/PedidosCentralLin?P2=@fecha&P3=@d["Pedido"]&P4=@d["Estado"]">@d["Pedido"]</a>
+                        <a href="/PedidosCentralLin?P2=@fecha&P3=@d["Pedido"]">&gt;&gt;</a>
+                    </div>
+                </td>
+                <td width="0"><div align="left">@d["Alm"]-@d["DescAlm"]</div></td>
+                <td>
+                    <div align="left">
+                        <a href="/PedidosCentralResum?P4=3&P3=@d["Estado"]&P2=@fecha">@d["DescEstado"]</a>
+                    </div>
+                </td>
+                <td>
+                    <div align="left">
+                        @if (!sinCierre)
+                        {
+                            @(cierre is DateTime fc ? fc.ToString("dd/MM/yyyy HH:mm") : $"{cierre}")
+                        }
+                    </div>
+                </td>
+                <td><div align="center">@d["Usuario"]</div></td>
+            </tr>
+        }
+    </table>
+    <table width="100%" height="5" border="0">
+        <tr>
+            <td><a href="javascript:history.back();">Volver</a></td>
+            <td>
+                <div align="right">
+                    @{
+                        var ultimo = Model.Pedidos.Count > 0 ? (IDictionary<string, object>?)Model.Pedidos[^1] : null;
+                        var sigP2 = ultimo is not null ? F(ultimo["Fecha"]) : Model.P2;
+                        var sigP3 = ultimo is not null ? $"{ultimo["Pedido"]}" : Model.P3;
+                    }
+                    <a href="/PedidosCentralDirecto?P2=@sigP2&P3=@sigP3">Siguiente Pagina &gt;&gt;</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

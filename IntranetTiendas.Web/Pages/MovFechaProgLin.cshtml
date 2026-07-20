@@ -1,0 +1,133 @@
+@page
+@model MovFechaProgLinModel
+@{
+    ViewData["Title"] = "Movimientos Fecha Sección Detalle";
+}
+
+<table width="100%">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="15" height="15" alt="Excel" /></td>
+        <td width="15%">&nbsp;</td>
+        <td width="70%" class="Titulos">Detalle de Movimientos Fecha @Model.P2 Sección @Model.P3</td>
+        <td width="15%">
+            <div align="right">
+                <div align="right" class="info_pequeno">
+                    @Model.Empresa - Alm: @Model.Alm - @Model.P2 - @DateTime.Now.ToString("HH:mm")
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<form action="/MovFechaProgLin" method="get">
+    <div align="center">
+        <input name="P2" type="text" value="@Model.P2" size="10" maxlength="10" />
+        <select name="P3">
+            <option value="0" selected="@(Model.P3 == "0")">Elige Sección ...</option>
+            <option value="4" selected="@(Model.P3 == "4")">4-Charcuteria</option>
+            <option value="7" selected="@(Model.P3 == "7")">7-Carniceria</option>
+            <option value="8" selected="@(Model.P3 == "8")">8-Panaderia</option>
+            <option value="13" selected="@(Model.P3 == "13")">13-Restauracion</option>
+        </select>
+        <input type="submit" name="Submit2" value="BUSCAR" />
+    </div>
+</form>
+
+<table class="datos" width="98%" border="0" align="center" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr><td class="Titulos">ENTRADA</td></tr>
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td width="10%" nowrap class="normal"><div><div align="center">Prod</div></div></td>
+        <td width="50%" nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td width="10%" nowrap class="normal"><div>Lote</div></td>
+        <td width="5%" nowrap class="normal"><div><b>Tipo</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Origen</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Prog</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Doc</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant</b></div></td>
+    </tr>
+    @{ var tipoActual = "0"; }
+    @foreach (var m in Model.Movimientos)
+    {
+        var md = (IDictionary<string, object>)m;
+        var tipo = $"{md["Tipo"]}";
+        if (tipo != tipoActual)
+        {
+            tipoActual = tipo;
+            <tr><td class="Titulos">SALIDA</td></tr>
+            <tr bordercolor="#000000" class="CabeceraTablas">
+                <td width="10%" nowrap class="normal"><div><div align="center">Prod</div></div></td>
+                <td width="50%" nowrap class="normal"><div><b>Descripcion</b></div></td>
+                <td width="10%" nowrap class="normal"><div>Lote</div></td>
+                <td width="5%" nowrap class="normal"><div><b>Tipo</b></div></td>
+                <td width="5%" nowrap class="normal"><div><b>Origen</b></div></td>
+                <td width="5%" nowrap class="normal"><div><b>Prog</b></div></td>
+                <td width="5%" nowrap class="normal"><div><b>Doc</b></div></td>
+                <td width="5%" nowrap class="normal"><div><b>Cant</b></div></td>
+            </tr>
+        }
+
+        var lote = $"{md["Lote"]}";
+        var tipoMov = $"{md["TipoMov"]}";
+        var doc = $"{md["Doc"]}";
+        var docUrl = tipoMov switch
+        {
+            "0" => $"/ComprasLin?P2={Model.P2}&P3={doc}",
+            "4" => $"/TraspasosLin?P2={Model.P2}&P3={doc}",
+            "3" => $"/AjustesLin?P2={Model.P2}&P3={doc}",
+            _ => null
+        };
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="right"><a href="/Producto?P1=@md["Prod"]">@md["Prod"]</a></div>
+            </td>
+            <td width="50%" nowrap>
+                <div align="left">@md["DescProdCompleta"]</div>
+            </td>
+            <td width="10%" nowrap>
+                <div align="center">
+                    @if (lote != "" && lote != "0")
+                    {
+                        <text>L:@lote</text>
+                    }
+                </div>
+            </td>
+            <td width="5%" nowrap><div align="right">@md["TipoMovDesc"]</div></td>
+            <td width="5%" nowrap>
+                <div align="right">
+                    @if ($"{md["AlmOrigen"]}" != $"{md["AlmDestino"]}")
+                    {
+                        @md["AlmOrigen"]
+                    }
+                </div>
+            </td>
+            <td width="5%" nowrap>
+                <div align="right">
+                    @if ($"{md["ProgOrigen"]}" != $"{md["ProgDest"]}")
+                    {
+                        @md["ProgOrigen"]
+                    }
+                </div>
+            </td>
+            <td width="5%" nowrap>
+                <div align="right">
+                    @if (docUrl is not null)
+                    {
+                        <a href="@docUrl">@doc</a>
+                    }
+                    else
+                    {
+                        @doc
+                    }
+                </div>
+            </td>
+            <td width="5%" nowrap>
+                <div align="right">@md["Cant"]</div>
+            </td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+    </tr>
+</table>

@@ -1,0 +1,20 @@
+@page
+@model AccionModel
+@{
+    ViewData["Title"] = "Ejecutando acción";
+    Layout = "_Layout";
+}
+@if (Model.Ok)
+{
+    <p align="center" class="resaltado">Acción ejecutada.</p>
+    <script>
+        // Las páginas antiguas abrían esto en popup y se autocerraba al acabar
+        if (window.opener) { window.opener.location.reload(); window.close(); }
+        else { history.back(); }
+    </script>
+}
+else
+{
+    <p align="center" class="tablaRojo">ERROR ejecutando la acción. Envíe esta línea a su administrador:</p>
+    <p align="center" class="normal">@Model.Detalle</p>
+}

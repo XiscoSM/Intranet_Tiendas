@@ -1,0 +1,106 @@
+@page
+@model PedidosCompraLinModel
+@{
+    ViewData["Title"] = "Pedido Compra Detalle";
+}
+
+<style type="text/css">
+    .Estilo1 { font-size: 10px }
+    .Estilo2 { font-size: 9 }
+    header, footer, nav, aside { display: none; }
+    .Estilo3 { font-size: 10 }
+</style>
+
+@if (Model.Cab is not null)
+{
+    var c = (IDictionary<string, object>)Model.Cab!;
+    <table class="tablapeq" width="99%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <th scope="col">
+                <div align="left" class="Estilo2">
+                    <br />Entregar en:
+                    <br />@c["Alm"]-@c["DescAlm"]
+                    <br />@c["DireccionAlm"]
+                    <br />@c["CPAlm"] - @c["PoblacionAlm"]
+                    <br />@c["DescProvinciaAlm"]
+                    <br />PO.Edi:@c["PuntoOperacionalEdi"]
+                </div>
+            </th>
+            <th width="50%" scope="col" class="Info">
+                <p>HIPER MANACOR S.A.</p>
+                <p>@Model.P2 - Ped.Compra: @Model.P3</p>
+            </th>
+            <th scope="col">
+                <div align="right">
+                    <span class="info_pequeno">@Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div align="left" class="Estilo2">
+                    <br />@c["Prov"] (@c["Gama"])
+                    <br />@c["DescProv"]
+                    <br />@c["Direccion"]
+                    <br />@c["CP"] - @c["Ciudad"]
+                    <br />@c["Provincia"]
+                </div>
+            </th>
+        </tr>
+    </table>
+}
+<p></p>
+<table class="datos" width="100%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="0%" nowrap class="normal"><div>Prod</div></td>
+        <td width="0%" nowrap class="normal"><div><b>Ean</b></div></td>
+        <td width="0%" nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td width="0%" nowrap class="normal"><div><b>Ref.</b></div></td>
+        <td width="0%" nowrap class="normal"><div><b>Cajas</b></div></td>
+        <td width="0%" nowrap class="normal"><div>U/C</div></td>
+        <td width="0%" nowrap class="normal"><div><b>Cant</b></div></td>
+        @if (Model.EstadoMayorCero)
+        {
+            <td width="0%" nowrap bgcolor="#999999" class="normal"><div><b>Recib.</b></div></td>
+        }
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="left"><a href="/Producto?P1=@d["Prod"]"><span class="Estilo3">@d["Prod"]</span> &gt;&gt;</a></div>
+            </td>
+            <td width="10%" nowrap><div align="left">@d["Ean"]</div></td>
+            <td width="50%" nowrap><div align="left">@d["DescProdCompleta"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["ProdProveedor"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cajas"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["UnidsCaja"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cant"]</div></td>
+            @if (Model.EstadoMayorCero)
+            {
+                <td width="5%" nowrap><div align="right">@d["CantRecibida"]</div></td>
+            }
+        </tr>
+        @if (!string.IsNullOrEmpty($"{d["ObservImprimir"]}"))
+        {
+            <tr class="tablamediano Estilo1">
+                <td></td>
+                <td><div align="right">Observ:</div></td>
+                <td>@d["ObservImprimir"]</td>
+            </tr>
+        }
+    }
+</table>
+<p></p>
+<div align="left" class="tablapeq"><strong>IMPORTANTE: Indicar obligatoriamente el nº de pedido en el albarán de entrega. No se aceptarán productos fuera de pedido. Portes Pagados</strong></div>
+@if (Model.EstadoMayorCero)
+{
+    <table width="100%" height="5" border="0">
+        <tr>
+            <td>
+                <div align="center">
+                    <font face="Arial, Helvetica, sans-serif"><a href="/Accion?V1=@Model.P3&Proc=4" title="Marcar como Leido" target="popup" class="Titulos"
+                        onclick="window.open ('', 'popup', 'left=50, top=50, width=200, height=200, resizable=no, scrollbars=no, menubar=no, toolbar=no, location=no, statusbar=no, copyhistory=no');window.location.reload();"> &lt;&lt;Marcar como Recepcionado&gt;&gt; </a></font>
+                </div>
+                <p><a href="javascript:history.back();">Volver</a></p>
+            </td>
+        </tr>
+    </table>
+}

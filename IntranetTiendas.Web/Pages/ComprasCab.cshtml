@@ -1,0 +1,67 @@
+@page
+@model ComprasCabModel
+@{
+    ViewData["Title"] = "Compras";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">COMPRAS</p>
+<table class="datos" width="99%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="0%" class="normal"><div>Fecha</div></td>
+        <td width="0%" class="normal"><div><b>Albaran</b></div></td>
+        <td width="1%" class="normal"><div><b>Prov</b></div></td>
+        <td width="0%" class="normal"><div><b>Proveedor</b></div></td>
+        <td width="1%" class="normal"><div><b>Gama</b></div></td>
+        <td width="0%" class="normal"><div><b>Gama</b></div></td>
+        <td width="0%" class="normal"><div><b>Prods</b></div></td>
+        <td width="0%" class="normal"><div><b>Importe</b></div></td>
+        <td width="0%" class="normal"><div><b>Reg.</b></div></td>
+        <td width="0%" class="normal"><div><b>User</b></div></td>
+    </tr>
+    @foreach (var r in Model.Compras)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%">@d["Fecha"]</td>
+            <td width="13%">
+                <div align="center"><a href="/ComprasLin?P2=@d["Fecha"]&P3=@d["Albaran"]">@d["Albaran"] &gt;&gt;</a></div>
+            </td>
+            <td><div align="right">@d["Prov"]</div></td>
+            <td><div align="left">@d["DescProv"]</div></td>
+            <td><div align="right"><a href="/ProvGamaProd?P2=@d["Gama"]">@d["Gama"]</a></div></td>
+            <td><div align="left">@d["DescGama"]</div></td>
+            <td><div align="right">@d["Prods"]</div></td>
+            <td><div align="right">@Model.Moneda(d["ImpTotalFact"])</div></td>
+            <td>
+                <div align="center">
+                    @if (!Convert.ToBoolean(d["Reg"]))
+                    {
+                        <span class="tablaRojo">No</span>
+                    }
+                    else
+                    {
+                        <span class="tablaMediano">Si</span>
+                    }
+                </div>
+            </td>
+            <td><div align="center">@d["Propietario"]</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+        <td><div align="right"><a href="/ComprasCab?P2=@Model.NextP2&P3=@Model.NextP3">Siguiente Pagina &gt;&gt;</a></div></td>
+    </tr>
+</table>

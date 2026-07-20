@@ -1,0 +1,100 @@
+@page
+@model RevisionStockProdsModel
+@{
+    ViewData["Title"] = "Revision Stock";
+}
+
+<div align="right">
+    <div id="CapaFiltros" style="display:none;">
+        <table width="95%">
+            <tr>
+                <td class="tablamediano">
+                    <form action="/InventariosLin" method="get" name="form2" target="_parent">
+                        <div align="right">
+                            <input name="P2" type="hidden" id="P2" value="" size="9" maxlength="9" />
+                            <input name="P3" type="hidden" id="P3" value="" size="3" maxlength="3" />
+                            Diferencia Mínima:
+                            <input name="P4" type="text" id="P4" value="" size="3" maxlength="3" />
+                            <input name="Filtrar" type="submit" value="Filtrar" />
+                        </div>
+                    </form>
+                </td>
+                <td class="Titulos" onclick="toggle('CapaFiltros')">Ocultar Filtros</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<table width="100%">
+    <tr>
+        <td width="25%"><a href="javascript:history.back();">Volver</a></td>
+        <td width="50%" class="info"><div align="center">Revisión Stock Productos Alm: @Model.Alm</div></td>
+        <td onclick="toggle('CapaFiltros')"><img src="~/img/FILTRO.jpg" width="23" height="23" alt="Filtros" /></td>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td width="20%">
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <div align="center">
+                <form action="/RevisionStockProds" method="get" name="form2" class="Estilo8">
+                    <select name="P1">
+                        <option value="1" selected="@(Model.P1 == "1")">Ean</option>
+                        <option value="0" selected="@(Model.P1 == "0")">Perederos</option>
+                    </select>
+                    <span class="info Estilo6">
+                        <input type="submit" name="Submit2" value="Revisar" />
+                    </span>
+                </form>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<table class="datos" width="100%" border="0" align="left" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td width="0%" class="normal"><div>Prod</div></td>
+        <td width="0%" class="normal"><div>Ean</div></td>
+        <td width="0%" class="normal"><div><b>Descripcion</b></div></td>
+        <td width="45" class="normal"><div>Stock</div></td>
+        <td width="40" class="normal"><div>Min</div></td>
+        <td width="40" class="normal"><div>Max</div></td>
+        <td width="45" class="normal"><div>S.Alm</div></td>
+        <td width="40" class="normal"><div>Central</div></td>
+    </tr>
+    @{ var bor = 0; }
+    @foreach (var p in Model.Productos)
+    {
+        var pd = (IDictionary<string, object>)p;
+        var prod = $"{pd["Prod"]}";
+        bor = bor == 0 && prod != "" ? 1 : 0;
+        var desc = $"{pd["DescProdCompleta"]}".Replace("\"", "''");
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td width="0%" style="border-bottom:@(bor)px dotted black;">
+                <div align="right"><a href="/Producto?P1=@prod">@prod</a></div>
+            </td>
+            <td width="0%" style="border-bottom:@(bor)px dotted black;">
+                <div align="left">@pd["Ean"]</div>
+            </td>
+            <td width="0%" style="border-bottom:@(bor)px dotted black;">
+                <div align="left">@desc</div>
+            </td>
+            <td class="normal" style="border-bottom:@(bor)px dotted black;">
+                <div align="right">
+                    <a href="/MovProducto?P1=@prod&P3=@pd["Stock"]&P4=@pd["StockMin"]&P5=@pd["StockMax"]&P6=@desc"><b>@pd["Stock"]</b></a>
+                </div>
+            </td>
+            <td style="border-bottom:@(bor)px dotted black;"><div align="center">@pd["StockMin"]</div></td>
+            <td style="border-bottom:@(bor)px dotted black;"><div align="center">@pd["StockMax"]</div></td>
+            <td style="border-bottom:@(bor)px dotted black;">
+                <div align="right">
+                    <a href="/MovProducto?P1=@prod&P2=@pd["AlmCentral"]&P3=@pd["StockCentral"]&P6=@desc"><b>@pd["StockCentral"]</b></a>
+                </div>
+            </td>
+            <td style="border-bottom:@(bor)px dotted black;"><div align="right">@pd["AlmCentral"]</div></td>
+        </tr>
+    }
+</table>

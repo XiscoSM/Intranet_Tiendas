@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="~/favicon.ico" />
+    <title>@(ViewData["Title"] ?? "Intranet Tiendas")</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    var empresa = ((DbService)Context.RequestServices.GetRequiredService(typeof(DbService))).Empresa;
+    var alm = User.FindFirst("Alm")?.Value;
+    var descAlm = User.FindFirst("DescAlm")?.Value;
+    var permiteCambio = User.FindFirst("PermiteCambioAlm")?.Value == "1";
+    <header class="site-header">
+        <a class="brand" href="/" title="Inicio">
+            <img src="~/img/logo_hipercentro.svg" alt="Hipercentro" class="brand-logo" />
+        </a>
+        @if (permiteCambio)
+        {
+            <a class="chip" href="/CambiarAlmacen" title="Cambiar de tienda">@empresa · <b>Alm @alm</b> @descAlm ▾</a>
+        }
+        else
+        {
+            <span class="chip">@empresa · <b>Alm @alm</b> @descAlm</span>
+        }
+        <span class="header-spacer"></span>
+        <form action="/Producto" method="get" class="buscador">
+            <label for="hdr-ean">Ean</label>
+            <input id="hdr-ean" name="P2" type="text" size="13" maxlength="14" placeholder="Código EAN" />
+            <label for="hdr-prod">Prod</label>
+            <input id="hdr-prod" name="P1" type="text" size="8" maxlength="8" placeholder="Nº" />
+            <input type="submit" value="Buscar" />
+        </form>
+        <a class="salir" href="/Login?handler=Logout">Salir (@User.Identity!.Name)</a>
+    </header>
+}
+<main class="@(User.Identity?.IsAuthenticated == true ? "" : "plain")">
+    @RenderBody()
+</main>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

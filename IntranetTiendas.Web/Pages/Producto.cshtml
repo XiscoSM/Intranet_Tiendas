@@ -1,0 +1,125 @@
+@page
+@model ProductoModel
+@{
+    ViewData["Title"] = "Ficha Producto";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<table border="0" valign="top" align="left" width="99%">
+    <tr><th colspan="2"><p align="center" class="Titulos">Ficha Producto</p></th></tr>
+    <tr>
+        <td valign="top">
+            @if (Model.Ficha is not null)
+            {
+                var f = (IDictionary<string, object>)Model.Ficha!;
+                <table border="0" align="left">
+                    <tr><td class="Negrita">@f["Prod"] - @f["DescProd"]</td></tr>
+                    @if (f["Imagen"] is bool tieneImg && tieneImg)
+                    {
+                        <tr>
+                            <td align="center">
+                                <a href="/ImageListProd?Prod=@f["Prod"]"><img src="/ImageProd?Prod=@f["Prod"]" border="0" alt="Imagen producto" /></a>
+                            </td>
+                        </tr>
+                    }
+                    <tr><td class="tablaMedianoAzul">Fecha Ult. Compra: @f["FechaUltCompra"]</td></tr>
+                    @* Centinela "01/01/2000" = sin compra en el almacén; ya normalizado a "01/01/00" *@
+                    @if ($"{f["FechaUltCompraAlm"]}" is not ("01/01/2000" or "01/01/00"))
+                    {
+                        <tr><td class="tablaMedianoAzul">Fecha Ult. Compra Alm.: @f["FechaUltCompraAlm"]</td></tr>
+                    }
+                    <tr>
+                        <td class="tablaMedianoAzul">
+                            Gama Ult. Compra:
+                            <a href="/ProvGamaProd?P2=@f["GamaUltCompra"]" class="CabeceraTablas">@f["GamaUltCompra"] (Gama)</a>
+                        </td>
+                    </tr>
+                    <tr><td class="tablaMedianoAzul">Pvp Normal: @Model.Moneda(f["PvpNormal"]) (@f["FechaPvp"])</td></tr>
+                    @if (Convert.ToDecimal(f["PvpOferta"]) > 0)
+                    {
+                        <tr><td class="tablaMedianoAzul">Pvp Oferta: @Model.Moneda(f["PvpOferta"]) (@f["FechaIni"] - @f["FechaFin"])</td></tr>
+                    }
+                    <tr><td class="tablaMedianoAzul">Stock: @f["Stock"] u.</td></tr>
+                    @if (Convert.ToDecimal(f["StockMax"]) > 0)
+                    {
+                        var fueraRango = Convert.ToDecimal(f["Stock"]) < Convert.ToDecimal(f["StockMin"])
+                                      || Convert.ToDecimal(f["Stock"]) > Convert.ToDecimal(f["StockMax"]);
+                        <tr>
+                            <td class="tablaMedianoAzul">
+                                Stock Min Max:
+                                <span class="@(fueraRango ? "tablaRojo" : "")">@f["StockMin"] - @f["StockMax"]</span>
+                            </td>
+                        </tr>
+                    }
+                    <tr><td class="tablaMedianoAzul">Unids Caja: @f["UnidsCajaProd"]</td></tr>
+                    @if (Convert.ToDecimal(f["PLU"]) > 0)
+                    {
+                        <tr><td class="tablaMedianoAzul">PLU: @f["PLU"] Tecla: @f["TeclaMadisa"]</td></tr>
+                    }
+                    <tr><td class="tablaMedianoAzul">@f["Surtido"]</td></tr>
+                    @if (f["BajaProd"] is bool baja && baja)
+                    {
+                        <tr><td class="tablaMedianoAzul">Producto de Baja (Bloqueado)</td></tr>
+                        <tr><td class="tablaMedianoAzul">Prod. Bloqueo Venta</td></tr>
+                    }
+                    <tr><td class="tablaMedianoAzul">Eans:</td></tr>
+                    <tr><td class="Negrita">@f["Ean"]</td></tr>
+                    @foreach (var e in Model.Eans)
+                    {
+                        var ed = (IDictionary<string, object>)e;
+                        <tr><td>@ed["Ean"]</td></tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p class="tablaRojo">Producto no encontrado.</p>
+            }
+        </td>
+        <td valign="top">
+            <table class="datos" valign="top" align="left">
+                <tr class="CabeceraTablas">
+                    <td class="normal"><b>Alm.</b></td>
+                    <td class="normal">Almacén</td>
+                    <td class="normal"><b>Stock</b></td>
+                    <td></td>
+                    <td class="normal">Min.</td>
+                    <td class="normal">Max.</td>
+                    <td class="normal">Movs.</td>
+                </tr>
+                @foreach (var s in Model.StockAlmacenes)
+                {
+                    var sd = (IDictionary<string, object>)s;
+                    var esMiAlm = Convert.ToInt32(sd["Alm"]) == Model.Alm;
+                    var stock = Convert.ToDecimal(sd["Stock"]);
+                    var min = Convert.ToDecimal(sd["StockMin"]);
+                    var max = Convert.ToDecimal(sd["StockMax"]);
+                    var claseAviso = max > 0 ? (stock > max ? "stock-exceso" : stock < min ? "stock-falta" : "") : "";
+                    <tr class="@(esMiAlm ? "tablaMedianoAzul" : "tablaMediano")">
+                        <td align="center">@sd["Alm"]</td>
+                        <td align="left">@sd["DescAlm"]</td>
+                        <td align="right">
+                            <a href="/MovProducto?P1=@Model.P1&P2=@sd["Alm"]&P3=@sd["Stock"]&P4=@sd["StockMin"]&P5=@sd["StockMax"]&P6=@Model.DescProdLink">
+                                <b>@sd["Stock"]</b>
+                            </a>
+                        </td>
+                        <td class="@claseAviso"></td>
+                        <td align="center">@sd["StockMin"]</td>
+                        <td align="center">@sd["StockMax"]</td>
+                        <td align="right">@sd["Movs"]</td>
+                    </tr>
+                }
+            </table>
+        </td>
+    </tr>
+</table>

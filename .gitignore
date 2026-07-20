@@ -1,0 +1,13 @@
+# --- .NET ---
+[Bb]in/
+[Oo]bj/
+
+# --- Visual Studio / Rider ---
+.vs/
+.idea/
+*.user
+*.suo
+
+# --- Secretos locales (no versionar cadenas de conexión ni passwords reales) ---
+appsettings.Production.json
+appsettings.*.Local.json

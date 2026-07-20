@@ -1,0 +1,69 @@
+@page
+@model TraspasosCabModel
+@{
+    ViewData["Title"] = "Traspasos";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">TRASPASOS</p>
+<table class="datos" width="98%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="10%" class="normal"><div>Fecha</div></td>
+        <td width="13%" class="normal"><div><b>Traspaso</b></div></td>
+        <td width="12%" class="normal"><div><b>Alm.Origen</b></div></td>
+        <td width="20%" class="normal"><div><b>Alm.Dest</b></div></td>
+        <td width="7%" class="normal"><div><b>Prods</b></div></td>
+        <td width="15%" class="normal"><div><b>Importe</b></div></td>
+        <td width="10%" class="normal"><div><b>Reg.</b></div></td>
+        <td width="13%" class="normal"><div><b>User</b></div></td>
+    </tr>
+    @foreach (var r in Model.Traspasos)
+    {
+        var d = (IDictionary<string, object>)r;
+        var esMiAlm = Convert.ToDecimal(d["AlmOrigen"]) == Model.Alm;
+        var reg = d["Reg"] is bool b && b;
+        <tr class="tablamediano">
+            <td width="10%">@d["Fecha"]</td>
+            <td width="13%">
+                <div align="center"><a href="/TraspasosLin?P2=@d["Fecha"]&P3=@d["Traspaso"]">@d["Traspaso"] &gt;&gt;</a></div>
+            </td>
+            <td width="12%"><div align="center">@d["AlmOrigen"]</div></td>
+            <td width="20%">
+                <div align="center">
+                    <span class="@(esMiAlm ? "tablaMediano" : "tablaMedianoRojo")">@d["AlmDestino"]</span>
+                </div>
+            </td>
+            <td><div align="right">@d["Prods"]</div></td>
+            <td><div align="right">@Model.Moneda(d["ImporteCoste"])</div></td>
+            <td>
+                <div align="center">
+                    @if (!reg)
+                    {
+                        <span class="tablaRojo">No</span>
+                    }
+                    else
+                    {
+                        <span class="tablaMediano">Si</span>
+                    }
+                </div>
+            </td>
+            <td><div align="center">@d["Propietario"]</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+        <td><div align="right"><a href="/TraspasosCab?P2=@Model.NextP2&P3=@Model.NextP3">Siguiente Página &gt;&gt;</a></div></td>
+    </tr>
+</table>

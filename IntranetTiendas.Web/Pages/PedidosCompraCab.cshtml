@@ -1,0 +1,74 @@
+@page
+@model PedidosCompraCabModel
+@{
+    ViewData["Title"] = "Pedidos de Compra";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">
+    PEDIDO PROVEEDOR (<a href="/PedidosCompraCabPend">Ver pendientes</a>)
+</p>
+
+<table class="datos" width="99%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="0%" class="normal"><div>Fecha</div></td>
+        <td width="0%" class="normal"><div>Fecha Env. </div></td>
+        <td width="0%" class="normal"><div><b>Pedido</b></div></td>
+        <td width="1%" class="normal"><div><b>Prov</b></div></td>
+        <td width="0%" class="normal"><div><b>Proveedor</b></div></td>
+        <td width="1%" class="normal"><div><b>Gama</b></div></td>
+        <td width="0%" class="normal"><div><b>Gama</b></div></td>
+        <td width="0%" class="normal"><div><b>Reg.</b></div></td>
+        <td width="0%" class="normal"><div><b>Estado</b></div></td>
+        <td width="0%" class="normal"><div><b>Observ.</b></div></td>
+        <td width="0%" class="normal"><div><b>Mail</b></div></td>
+    </tr>
+    @foreach (var r in Model.Pedidos)
+    {
+        var d = (IDictionary<string, object>)r;
+        var observ = $"{d["ObservImprimir"]}";
+        var observ30 = observ.Length > 30 ? observ[..30] : observ;
+        <tr class="tablamediano">
+            <td width="10%"><div align="center">@d["Fecha"]</div></td>
+            <td width="10%"><div align="center">@d["FechaPrevEnvio"]</div></td>
+            <td width="13%">
+                <div align="center"><a href="/PedidosCompraLin?P2=@d["Fecha"]&P3=@d["Pedido"]">@d["Pedido"] &gt;&gt;</a></div>
+            </td>
+            <td><div align="right">@d["Prov"]</div></td>
+            <td><div align="left">@d["DescProv"]</div></td>
+            <td><div align="right">@d["Gama"]</div></td>
+            <td><div align="left">@d["DescGama"]</div></td>
+            <td>
+                <div align="center">
+                    @if (!Convert.ToBoolean(d["Reg"]))
+                    {
+                        <span class="tablaRojo">No</span>
+                    }
+                    else
+                    {
+                        <span class="tablaMediano">Si</span>
+                    }
+                </div>
+            </td>
+            <td><div align="center">@d["DescEstado"]</div></td>
+            <td><div align="left" class="info_pequeno"><a title="@observ">@observ30</a></div></td>
+            <td><div align="left" class="tablapeq">@d["Mail"]</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+        <td><div align="right"><a href="/PedidosCompraCab?P2=@Model.NextP2&P3=@Model.NextP3">Siguiente Pagina &gt;&gt;</a></div></td>
+    </tr>
+</table>

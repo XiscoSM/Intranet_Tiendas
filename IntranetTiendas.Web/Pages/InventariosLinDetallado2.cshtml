@@ -1,0 +1,138 @@
+@page
+@model InventariosLinDetallado2Model
+@{
+    ViewData["Title"] = "Inventario";
+}
+
+<div id="CapaFiltros" style="display:none">
+    <form action="/InventariosLin" method="get" name="form2">
+        <div align="right" class="tablamediano">
+            <input name="P2" type="hidden" id="P2" value="@Model.P2" size="9" maxlength="9" />
+            <input name="P3" type="hidden" id="P3" value="@Model.P3" size="3" maxlength="3" />
+            Diferencia Mínima:
+            <input name="P4" type="text" id="P4" value="@Model.P4" size="3" maxlength="3" />
+            <input name="Filtrar" type="submit" value="Filtrar" />
+        </div>
+    </form>
+</div>
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="toggle('CapaFiltros')"><img src="~/img/FILTRO.jpg" width="23" height="23" alt="Filtros" /></td>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="info">
+    Inventario Detalle @Model.P2 Alm.:@Model.Alm Programa:@Model.P3
+    @if (!string.IsNullOrEmpty(Model.P4) && Model.P4 != "0")
+    {
+        <text> Diferencia Mínima: @Model.P4 </text>
+    }
+</p>
+<table class="datos" width="98%" align="center" id="myTable2">
+    <tr>
+        <th onclick="sortTable(0)">Prod</th>
+        <th onclick="sortTable(1)">Descripcion</th>
+    </tr>
+    <tr class="CabeceraTablas">
+        <td width="10%" nowrap class="normal"><div>Prod</div></td>
+        <td width="50%" nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant Teorica </b></div></td>
+        <td width="5%" nowrap class="normal"><div>Cant Fisica </div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant Dif</b></div></td>
+        <td width="5%" nowrap class="normal"><div>Fisico.</div></td>
+        <td width="5%" nowrap class="normal"><div><b>Diferencia</b></div></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="left"><a href="/Producto?P1=@d["Prod"]">@d["Ean"] &gt;&gt;</a></div>
+            </td>
+            <td width="50%" nowrap><div align="left">@d["DescProdCompleta"]</div></td>
+            <td width="10%" nowrap>
+                <div align="right"><a href="/MovProducto?P1=@d["Prod"]&P6=@d["DescProdCompleta"]">@d["CantTeorica"] &gt;&gt;</a></div>
+            </td>
+            <td width="10%" nowrap>
+                <div align="right"><a href="/InventarioDetallLin?P2=@Model.P2&P3=@d["Prod"]">@d["CantFisica"] &gt;&gt;</a></div>
+            </td>
+            <td width="5%" nowrap><div align="right">@d["CantDif"]</div></td>
+            <td width="5%" nowrap><div align="right">@Model.Moneda(d["ImporteCosteFisico"])</div></td>
+            <td width="5%" nowrap><div align="right">@Model.Moneda(d["ImporteCosteDif"])</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+        <td class="CabeceraTablas">
+            <div align="right">Importe Inventario: @Model.Moneda(Model.Total1) Importe Dif. Inventario: @Model.Moneda(Model.Total2)</div>
+        </td>
+    </tr>
+</table>
+
+@section Scripts {
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable2");
+            switching = true;
+            // Set the sorting direction to ascending:
+            dir = "asc";
+            /* Make a loop that will continue until
+            no switching has been done: */
+            while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /* Loop through all table rows (except the
+                first, which contains table headers): */
+                for (i = 1; i < (rows.length - 1); i++) {
+                    // Start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /* Get the two elements you want to compare,
+                    one from current row and one from the next: */
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /* Check if the two rows should switch place,
+                    based on the direction, asc or desc: */
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            // If so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            // If so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /* If a switch has been marked, make the switch
+                    and mark that a switch has been done: */
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    // Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /* If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again. */
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+}

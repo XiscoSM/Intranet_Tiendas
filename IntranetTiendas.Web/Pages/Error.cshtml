@@ -1,0 +1,14 @@
+@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div align="center">
+    <p class="Titulos">Se ha producido un error</p>
+    <p class="normal">Inténtelo de nuevo. Si el problema persiste avise a Incidencias Informática (Ext. 1015).</p>
+    @if (Model.RequestId is not null)
+    {
+        <p class="info_pequeno">Referencia: @Model.RequestId</p>
+    }
+    <p><a href="/">Volver al inicio</a></p>
+</div>

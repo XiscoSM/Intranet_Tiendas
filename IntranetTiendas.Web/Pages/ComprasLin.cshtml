@@ -1,0 +1,99 @@
+@page
+@model ComprasLinModel
+@{
+    ViewData["Title"] = "Compra Detalle";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+@if (Model.Cab is not null)
+{
+    var c = (IDictionary<string, object>)Model.Cab!;
+    <table width="100%" border="0">
+        <tr class="info_pequeno">
+            <td width="35%">
+                <table width="100%" border="0" class="info_pequeno">
+                    <tr><td>Proveedor: @c["DescProv"];</td></tr>
+                    <tr><td>Gama: @c["DescGama"]</td></tr>
+                    <tr><td>CIF: @c["CifProv"]</td></tr>
+                </table>
+                <p><br /></p>
+            </td>
+            <td valign="top" class="info Estilo1">
+                <p align="center" class="Titulos">@Model.P2 Albarán @Model.P3</p>
+                <p align="center" class="Titulos">Alb.Proveedor: @c["NumAlbProv"]</p>
+                @if (!Convert.ToBoolean(c["Reg"]))
+                {
+                    <text> NO REGISTRADO </text>
+                }
+            </td>
+            <td width="35%" valign="top">
+                <div>
+                    <table width="100%" border="0" align="right" class="info_pequeno">
+                        <tr><td><div align="right">@c["Empresa"] (@c["CIF"])</div></td></tr>
+                        <tr><td><div align="right">Almacén: @c["Alm"] - @c["DescAlmDestino"]</div></td></tr>
+                        <tr><td><div align="right">@c["DireccionAlmDestino"] - @c["PoblacionAlmDestino"]</div></td></tr>
+                        <tr><td><div align="right">@c["DesProvinciaAlmDest"] - Telf.:@c["TelefonoAlmDestino"]</div></td></tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    @if (!string.IsNullOrEmpty($"{c["Comentarios"]}"))
+    {
+        <table width="100%" height="5" border="0">
+            <tr class="tablamediano">
+                <td>@c["Comentarios"]</td>
+            </tr>
+        </table>
+    }
+}
+
+<table class="datos" width="98%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="0%" nowrap class="normal"><div>Prod</div></td>
+        <td width="0%" nowrap class="normal"><div><b>Ean</b></div></td>
+        <td width="0%" nowrap class="normal"><div><b>Ean</b> Intro </div></td>
+        <td width="0%" nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td width="0%" nowrap class="normal"><div><b>Cajas</b></div></td>
+        <td width="0%" nowrap class="normal"><div>U/C</div></td>
+        <td width="0%" nowrap class="normal"><div><b>Cant</b></div></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="left"><a href="/Producto?P1=@d["Prod"]">@d["Prod"] &gt;&gt;</a></div>
+            </td>
+            <td width="10%" nowrap><div align="left">@d["Ean"]</div></td>
+            <td width="10%" nowrap><div align="left">@d["EanIntro"]</div></td>
+            <td width="50%" nowrap><div align="left">@d["DescProdCompleta"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cajas"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["UnidsCaja"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cant"]</div></td>
+        </tr>
+        @if (!string.IsNullOrEmpty($"{d["Comentario"]}"))
+        {
+            <tr class="tablamediano">
+                <td colspan="5">@d["Comentario"]</td>
+            </tr>
+        }
+    }
+</table>
+
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+    </tr>
+</table>

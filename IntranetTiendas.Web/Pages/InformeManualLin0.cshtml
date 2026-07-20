@@ -1,0 +1,49 @@
+@page
+@model InformeManualLin0Model
+@{
+    ViewData["Title"] = "Informe Detalle";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Info">Informe @Model.Text  - @Model.P2  Nº:@Model.P3</p>
+<table width="98%" border="1" align="center" class="datos">
+    <tr class="CabeceraTablas">
+        <td width="10%" nowrap class="normal"><div>Prod</div></td>
+        <td width="10%" nowrap class="normal"><div><b>Ean</b></div></td>
+        <td width="50%" nowrap class="normal"><div><b>Descripcion</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cajas</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Pvp</b></div></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="left"><a href="/Producto?P1=@d["Prod"]">@d["Prod"] &gt;&gt;</a></div>
+            </td>
+            <td width="10%" nowrap><div align="left">@d["Ean"]</div></td>
+            <td width="50%" nowrap><div align="left">@d["DescProdCompleta"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cajas"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cant"]</div></td>
+            <td width="5%" nowrap><div align="right">@Model.Moneda(d["PrecioA"])</div></td>
+            <td>@(Convert.ToBoolean(d["Procesado"] ?? false) ? "-" : "")</td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><div align="left"><a href="javascript:history.back();">Volver </a></div></td>
+        <td><div align="right" class="Negrita">Importe Venta: @Model.Moneda(Model.Total)</div></td>
+    </tr>
+</table>

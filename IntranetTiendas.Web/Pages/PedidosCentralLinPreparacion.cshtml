@@ -1,0 +1,91 @@
+@page
+@model PedidosCentralLinPreparacionModel
+@{
+    var cab = Model.Cab is not null ? (IDictionary<string, object>)Model.Cab! : null;
+    string F(object? v) => v is DateTime dt ? dt.ToString("dd/MM/yyyy") : $"{v}";
+    ViewData["Title"] = cab is not null
+        ? $"Preparacion: {cab["Alm"]}-{cab["DescAlm"]}-{F(cab["Fecha"])} Impreso:[{DateTime.Now:dd/MM/yyyy}]"
+        : "Preparacion";
+}
+
+<style>
+    .Estilo8 { color: #CCCCCC; }
+    .Estilo10 { font-size: 14px; }
+</style>
+
+@if (cab is not null)
+{
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablaMedianoAzul">
+        <tr class="Estilo10">
+            <th scope="col" align="left">Hiper Manacor S.A.</th>
+            <th scope="col" align="left">Origen:</th>
+            <th scope="col" align="left">Destino:</th>
+        </tr>
+        <tr class="Estilo10">
+            <th scope="col" align="left">CIF.A07169287</th>
+            <th scope="col" align="left">@cab["AlmCentral"]-@cab["DescAlmCentral"]</th>
+            <th scope="col" align="left"><span class="Estilo10">@cab["Alm"]-@cab["DescAlm"]</span></th>
+        </tr>
+        <tr>
+            <th scope="col" align="left">@F(cab["Fecha"])- Pedido: @Model.P3</th>
+            <th scope="col" align="left">@cab["DireccionCentral"]</th>
+            <th scope="col" align="left">@cab["Direccion"]</th>
+        </tr>
+        <tr>
+            <th scope="col" align="left">&nbsp;</th>
+            <th scope="col" align="left">@cab["PoblacionCentral"]</th>
+            <th scope="col" align="left">@cab["Poblacion"]</th>
+        </tr>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">&nbsp;</th>
+            <th scope="col">&nbsp;</th>
+        </tr>
+    </table>
+}
+
+<table style="border:0px solid black; border-collapse:collapse; width:100%">
+    <tr>
+        <td nowrap class="normal"><div><div align="left"></div></div></td>
+        <td nowrap class="normal"></td>
+        <td colspan="3" nowrap class="normal"><div align="center" class="CabeceraTablas">Pedido</div></td>
+        <td nowrap class="normal" style="border-left:1px solid black;"><div class="CabeceraTablas"><b>Enviado</b></div></td>
+    </tr>
+    <tr class="CabeceraTablas">
+        <td nowrap class="normal" style="border-bottom:1px solid black;"><div><div align="left"><b>Ean - Ubic.</b></div></div></td>
+        <td nowrap class="normal" style="border-bottom:1px solid black;"><div><b>Descripcion</b></div></td>
+        <td nowrap class="normal" style="border-bottom:1px solid black;"><div><b>Cajas</b></div></td>
+        <td nowrap class="normal" style="border-bottom:1px solid black;"><div>U/C</div></td>
+        <td nowrap class="normal" style="border-bottom:1px solid black;"><div><b>Cant</b></div></td>
+        <td nowrap bgcolor="#FFFFFF" style="border-left:1px solid black;"></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr bgcolor="#FFFFFF" class="tablamediano">
+            <td height="40" style="border-bottom:1px solid black;">
+                <div align="left" class="tablapeq"><span class="tablamediano">@d["Ean"]</span> Ubic.@d["Ubicacion"]</div>
+            </td>
+            <td nowrap style="border-bottom:1px solid black;">
+                <div align="left">@d["DescProdCompleta"]<span class="tablapeq"> (@d["StockCajas"]c.)</span></div>
+            </td>
+            <td height="40" style="padding-right: 5px;border-bottom:1px solid black">
+                <div align="right">@d["CajasPedidas"]</div>
+            </td>
+            <td height="40" style="padding-right: 2px;border-bottom:1px solid black;border-left:1px dashed black;">
+                <div align="center" class="@($"{d["UnidsCaja"]}" != "1" ? "tablamediano" : "")">@d["UnidsCaja"]</div>
+            </td>
+            <td height="40" style="padding-right: 3px;border-bottom:1px solid black;border-left:1px dashed black;">
+                <div align="right">@d["CantPedida"]</div>
+            </td>
+            <td height="40" style="border:1px solid black;" valign="bottom"><span class="Estilo8"></span></td>
+        </tr>
+    }
+</table>
+<div align="right">
+    <p class="tablaMedianoAzul">&nbsp; </p>
+    <p class="tablaMedianoAzul">
+        Fecha Cierre: @(cab is not null ? (cab["FechaHoraCierre"] is DateTime fc ? fc.ToString("dd/MM/yyyy HH:mm:ss") : $"{cab["FechaHoraCierre"]}") : "")
+        Impresión:@DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+    </p>
+</div>

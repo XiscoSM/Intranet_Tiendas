@@ -1,0 +1,47 @@
+@page
+@model InformeBalanzasModel
+@{
+    ViewData["Title"] = "Informe Balanzas";
+}
+
+<style>
+    .Estilo6 { font-size: xx-small; font-weight: normal; font-family: Arial, Helvetica, sans-serif; }
+</style>
+
+<div align="right">
+    <table width="100%" border="0">
+        <tr class="resaltado">
+            <td width="35%" class="resaltado">
+                <input name="button" type="button" onclick="history.go(-1)" value="&lt;&lt;atrás" />
+                <input name="button2" type="button" onclick="history.go(1)" value="adelante &gt;&gt;" />
+            </td>
+            <td width="38%"><div align="center" class="Titulos">Informe Balanzas @Model.Alm Fecha: @Model.Fecha</div></td>
+            <td width="27%">
+                <div align="right">
+                    <input name="button2" type="button" onclick="javascript:window.close()" value="Cerrar Ventana " />
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+@if (Model.Balanzas.Count > 0)
+{
+    <p align="center"><strong><span class="Titulos"><b>BALANZAS</b></span></strong></p>
+    <table width="99%" border="0" class="datos">
+        <tr bgcolor="#CCCCCC" class="CabeceraTablas">
+            <td width="27%"><div align="center">Seccion</div></td>
+            <td width="44%"><div align="center">Venta</div></td>
+            <td width="22%"><div align="center">Dto</div></td>
+        </tr>
+        @foreach (var r in Model.Balanzas)
+        {
+            var d = (IDictionary<string, object>)r;
+            <tr bgcolor="#FFFFFF" class="Estilo6">
+                <td><div align="left"><span>@d["seccion"] (@d["Tecla"])</span></div></td>
+                <td><div align="right"><span>@d["Venta"] &euro; </span></div></td>
+                <td><div align="right"><span>@d["Dto"]&euro; </span></div></td>
+            </tr>
+        }
+    </table>
+}

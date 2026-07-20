@@ -1,0 +1,41 @@
+@page
+@model InventarioDetallLinModel
+@{
+    ViewData["Title"] = "Inventario Detalle Producto";
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">Inventario Detalle Producto:@Model.P3 Fecha:@Model.P2 Alm:@Model.Alm</p>
+<table class="datos" width="98%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="10%" nowrap class="normal"><div><b>Ean</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Fecha-Hora</b></div></td>
+        <td width="5%" nowrap class="normal"><div>Terminal</div></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%" nowrap><div align="left">@d["Ean"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cant"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["FechaHora"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["NumTerminal"]</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><a href="javascript:history.back();">Volver</a></td>
+    </tr>
+</table>

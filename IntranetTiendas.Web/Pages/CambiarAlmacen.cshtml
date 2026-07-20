@@ -1,0 +1,25 @@
+@page
+@model CambiarAlmacenModel
+@{
+    ViewData["Title"] = "Cambiar de tienda";
+}
+<p class="Titulos">Cambiar de tienda / almacén</p>
+@if (!Model.PermiteCambioAlm)
+{
+    <p class="tablaRojo">Tu usuario no tiene permiso para cambiar de almacén.</p>
+}
+else
+{
+    <form method="post" class="buscador" style="justify-content:center">
+        <select name="NuevoAlm">
+            @foreach (var a in Model.Almacenes)
+            {
+                var d = (IDictionary<string, object>)a;
+                var alm = Convert.ToInt32(d["Alm"]);
+                <option value="@alm" selected="@(alm == Model.Alm)">@alm - @d["DescAlm"]</option>
+            }
+        </select>
+        <input type="submit" value="Cambiar de tienda" />
+    </form>
+}
+<p style="text-align:center;margin-top:18px"><a href="/">Volver al inicio</a></p>

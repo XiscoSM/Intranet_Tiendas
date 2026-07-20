@@ -1,0 +1,40 @@
+@page
+@model InfoEtiquetasModel
+@{
+    ViewData["Title"] = "Etiquetas";
+}
+
+<p class="Titulos">Estimación Aproximada de Etiquetas - Tienda: @Model.Alm</p>
+<table class="datos" border="0" align="center" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td width="70" bordercolor="#000000" class="normal">
+            <div class="Estilo2">
+                <div align="center"><b>Fecha</b></div>
+            </div>
+        </td>
+        <td width="40" bordercolor="#000000" class="normal">&nbsp;</td>
+        <td width="40" bordercolor="#000000" class="normal">
+            <div class="Estilo2">
+                <div align="center"><b>Etiqs</b></div>
+            </div>
+        </td>
+    </tr>
+    @foreach (var e in Model.Etiquetas)
+    {
+        var ed = (IDictionary<string, object>)e;
+        <tr bordercolor="#FFFFFF" class="tabla">
+            <td width="111"><div align="center">@ed["FechaEtiq"]</div></td>
+            <td>@ed["DiaSemana"]</td>
+            <td>
+                <div align="right">
+                    <a href="/InfoEtiquetasDetall?P1=@ed["FechaEtiq"]">@ed["Etiqs"]</a>
+                </div>
+            </td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>

@@ -1,0 +1,119 @@
+@page
+@model InformeCierreModel
+@{
+    ViewData["Title"] = "Informe Cierre Tienda";
+}
+
+<style>
+    .Estilo6 { font-size: xx-small; font-weight: normal; font-family: Arial, Helvetica, sans-serif; }
+</style>
+
+<div align="right">
+    <table width="100%" border="0">
+        <tr class="resaltado">
+            <td width="35%" class="resaltado">
+                <input name="button" type="button" onclick="history.go(-1)" value="&lt;&lt;atrás" />
+                <input name="button2" type="button" onclick="history.go(1)" value="adelante &gt;&gt;" />
+            </td>
+            <td width="38%"><div align="center" class="Titulos">Informe Cierre Cajas @Model.Alm Fecha: @Model.Fecha</div></td>
+            <td width="27%">
+                <div align="right">
+                    <input name="button2" type="button" onclick="javascript:window.close()" value="Cerrar Ventana " />
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+@if (Model.TeffFirmas.Count > 0)
+{
+    <p><strong><span class="Titulos"><b>Tarjetas TEF con Firma</b></span></strong></p>
+    <table width="40%" border="1" class="datos">
+        <tr bgcolor="#FFFFFF" class="CabeceraTablas">
+            <td>Cajero</td>
+            <td width="1%"><div align="center">Total Tarjetas Firma </div></td>
+            @* <td width="1%" bgcolor="#CCCCCC"><div align="center">Tarjetas Devol.</div></td> *@
+        </tr>
+        @foreach (var r in Model.TeffFirmas)
+        {
+            var d = (IDictionary<string, object>)r;
+            <tr bgcolor="#FFFFFF" class="Estilo6">
+                <td><div align="left" class="tablamediano"><span>@d["OperNo"] - @d["Operador"]</span></div></td>
+                <td><div align="center" class="tablamediano"><strong>@d["NumTarjetas"]</strong></div></td>
+                <td bgcolor="#FFFFFF">
+                    <div align="left" class="tablamediano">
+                        @* En origen el dato NumTarjetasDevol estaba comentado; se conserva la celda vacía *@
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@if (Model.Secciones.Count > 0)
+{
+    <div align="left">
+        <p><strong><span class="Titulos"><b>CALZADO</b></span></strong></p>
+        <table class="datos">
+            <tr bgcolor="#CCCCCC" class="CabeceraTablas">
+                <td><div align="center">Cajero</div></td>
+                <td><div align="center">Producto</div></td>
+                <td><div align="center">Unid&acute;s</div></td>
+                <td><div align="center">Importe</div></td>
+            </tr>
+            @foreach (var r in Model.Secciones)
+            {
+                var d = (IDictionary<string, object>)r;
+                <tr bgcolor="#FFFFFF" class="Estilo6">
+                    <td><div align="left"><span>@d["OperatorNo"]-@d["Description"]</span></div></td>
+                    <td><div align="left"><span>@d["ItemNo"] - @d["descripcion"]</span></div></td>
+                    <td><div align="center"><span>@d["cant"] u.</span></div></td>
+                    <td><div align="right"><span>@d["importe"]&euro; </span></div></td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+
+@if (Model.Cambios.Count > 0)
+{
+    <p align="center"><span class="Titulos"><b>CAMBIOS DE PVP - VENTA A VARIOS (NO EXISTE) - COBROS A CUENTA </b></span></p>
+    <table width="99%" border="1" class="datos">
+        <tr bgcolor="#CCCCCC" class="CabeceraTablas">
+            <td bgcolor="#CCCCCC"><div align="center"><strong>Cajero</strong></div></td>
+            <td><div align="center"><strong>Autorizador</strong></div></td>
+            <td><div align="center"><strong>Caja</strong></div></td>
+            <td bgcolor="#CCCCCC"><div align="center"><strong>Hora</strong></div></td>
+            <td bgcolor="#CCCCCC"><div align="center"><strong>Descripcion</strong></div></td>
+            <td bgcolor="#CCCCCC"><div align="center" class="Estilo3">Cant.</div></td>
+            <td bgcolor="#CCCCCC"><div align="center" class="Estilo3">Pvp N</div></td>
+            <td bgcolor="#CCCCCC"><div align="center" class="Estilo3">PVP </div></td>
+            <td><div align="center"><strong>Motivo</strong></div></td>
+            <td bgcolor="#CCCCCC"><div align="center"><strong>Total</strong></div></td>
+        </tr>
+        @foreach (var r in Model.Cambios)
+        {
+            var d = (IDictionary<string, object>)r;
+            <tr>
+                <td><div align="left">@d["OperNo"]- @d["Operador"]</div></td>
+                <td>
+                    <div align="left">
+                        @d["Autorizado"]
+                        @if ($"{d["Alert"]}" != "")
+                        {
+                            <span class="tablaMedianoRojo"> (@d["Alert"]) </span>
+                        }
+                    </div>
+                </td>
+                <td><div align="center">@d["Caja"]</div></td>
+                <td><div align="center">@Model.Hora(d["FechaHora"])</div></td>
+                <td><div align="left">@d["DescProd"]</div></td>
+                <td><div align="right">@d["Cantidad"]</div></td>
+                <td bgcolor="#FFFFFF"><div align="right" class="Estilo2">@d["Precio2"]&euro;.</div></td>
+                <td bgcolor="#CCCCCC"><div align="right">@d["Precio"]&euro;.</div></td>
+                <td><div align="left">@d["DescMotiv"]</div></td>
+                <td><div align="right">@d["Importe"]&euro;.</div></td>
+            </tr>
+        }
+    </table>
+}

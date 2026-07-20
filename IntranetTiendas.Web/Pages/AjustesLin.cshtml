@@ -1,0 +1,56 @@
+@page
+@model AjustesLinModel
+@{
+    ViewData["Title"] = "Ajuste Detalle";
+    var primera = Model.Lineas.Count > 0 ? (IDictionary<string, object>)Model.Lineas[0] : null;
+}
+
+<table align="right">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td>
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">
+    Ajuste @Model.P2 - @Model.P3
+    @if (primera is not null)
+    {
+        <text>- Origen: @primera["AlmOrigen"] - Destino: @primera["AlmDestino"]</text>
+    }
+</p>
+<p align="center" class="Titulos">@Model.Text &nbsp;</p>
+<table class="datos" width="98%" align="center">
+    <tr class="CabeceraTablas">
+        <td width="10%" nowrap class="normal"><div>Prod</div></td>
+        <td width="10%" nowrap class="normal"><div><b>Ean</b></div></td>
+        <td width="50%" nowrap class="normal"><div><b>Descripción</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Cant</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Precio</b></div></td>
+        <td width="5%" nowrap class="normal"><div><b>Importe</b></div></td>
+    </tr>
+    @foreach (var r in Model.Lineas)
+    {
+        var d = (IDictionary<string, object>)r;
+        <tr class="tablamediano">
+            <td width="10%" nowrap>
+                <div align="left"><a href="/Producto?P1=@d["Prod"]">@d["Prod"] &gt;&gt;</a></div>
+            </td>
+            <td width="10%" nowrap><div align="left">@d["Ean"]</div></td>
+            <td width="50%" nowrap><div align="left">@d["DescProdCompleta"]</div></td>
+            <td width="5%" nowrap><div align="right">@d["Cant"]</div></td>
+            <td width="5%" nowrap><div align="right">@Model.Moneda(d["PrecioCoste"])</div></td>
+            <td width="5%" nowrap><div align="right">@Model.Moneda(d["ImporteCoste"])</div></td>
+        </tr>
+    }
+</table>
+<table width="100%" height="5" border="0">
+    <tr>
+        <td><div align="left"><a href="javascript:history.back();">Volver</a></div></td>
+        <td><div align="right" class="Negrita">Importe Total: @Model.Moneda(Model.Total)</div></td>
+    </tr>
+</table>

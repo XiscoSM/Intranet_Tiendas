@@ -1,0 +1,67 @@
+@page
+@model ComunicadosModel
+@{
+    ViewData["Title"] = "Comunicados";
+}
+
+<table width="30%">
+    <tr>
+        <td class="export-bar" onclick="ExportPage()"><img src="~/img/excel.jpg" width="23" height="23" alt="Excel" /></td>
+        <td width="60%">
+            <div align="right" class="info_pequeno">
+                @Model.Empresa - Alm: @Model.Alm - @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </td>
+    </tr>
+</table>
+
+<p align="center" class="Titulos">COMUNICADOS</p>
+<table class="datos" width="99%" border="1" align="center" bordercolor="#FFFFFF" bgcolor="#FFFFFF">
+    <tr bordercolor="#000000" class="CabeceraTablas">
+        <td><div align="center" class="Estilo8">Documento</div></td>
+        <td><div align="center" class="Estilo8">Fecha</div></td>
+        <td><div align="center"><span class="Estilo8"></span></div></td>
+        <td><div align="center" class="Estilo8">Leido</div></td>
+        <td><div align="center"><span class="Estilo8"></span></div></td>
+    </tr>
+    @{ var fondo = "#CCCCCC"; }
+    @foreach (var c in Model.Comunicados)
+    {
+        var d = (IDictionary<string, object>)c;
+        fondo = fondo == "#CCCCCC" ? "#FFFFFF" : "#CCCCCC";
+        var leido = $"{d["LeidoDesc"]}";
+        <tr bordercolor="#FFFFFF" bgcolor="@fondo">
+            <td>@d["Archivo"] @d["Texto"]</td>
+            <td><div align="center">@d["Fecha"]</div></td>
+            <td>
+                <div align="center">
+                    @if ($"{d["Archivo"]}" != "")
+                    {
+                        <a href="@d["RutaWeb"]" target="_blank">Ver</a>
+                    }
+                </div>
+            </td>
+            @if (leido != "No")
+            {
+                <td bordercolor="#FFFFFF" bgcolor="#FFFFFF" class="normal"><div align="center">@leido</div></td>
+            }
+            else
+            {
+                <td bordercolor="#FF0000" bgcolor="#FF0000" class="Estilo7"><div align="center">@leido</div></td>
+            }
+            @if (leido == "No")
+            {
+                <td>
+                    <div align="center">
+                        <a title="Marcar como Leido" href="/Accion?V2=@Model.Alm&V1=@d["Doc"]&Proc=3" target="popup"
+                           onclick="window.open ('', 'popup', 'left=50, top=50, width=200, height=200, resizable=no, scrollbars=no, menubar=no, toolbar=no, location=no, statusbar=no, copyhistory=no');window.location.reload();">Marcar Leido</a>
+                    </div>
+                </td>
+            }
+        </tr>
+    }
+</table>
+<p align="right" class="Estilo3">&nbsp;</p>
+<div align="right">
+    <pre>&nbsp;</pre>
+</div>

@@ -46,7 +46,9 @@ public class DbService(IConfiguration cfg)
     {
         await using var cn = Open();
         var row = await cn.QueryFirstOrDefaultAsync(proc, param, commandType: CommandType.StoredProcedure);
-        NormalizarFechas(row);
+        // Cast explícito a object?: 'row' es dynamic y, si es null, la resolución de sobrecarga en
+        // tiempo de ejecución elegiría NormalizarFechasFila(List<dynamic>) y reventaría el foreach.
+        NormalizarFechasFila((object?)row);
         return row;
     }
 
@@ -60,11 +62,11 @@ public class DbService(IConfiguration cfg)
     /// </summary>
     private static List<dynamic> NormalizarFechas(List<dynamic> rows)
     {
-        foreach (var row in rows) NormalizarFechas(row);
+        foreach (var row in rows) NormalizarFechasFila((object?)row);
         return rows;
     }
 
-    private static void NormalizarFechas(object? row)
+    private static void NormalizarFechasFila(object? row)
     {
         if (row is not IDictionary<string, object> d) return;
         List<KeyValuePair<string, object?>>? cambios = null;

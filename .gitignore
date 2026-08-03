@@ -9,5 +9,8 @@
 *.suo
 
 # --- Secretos locales (no versionar cadenas de conexión ni passwords reales) ---
+# Solo se versiona appsettings.json (con placeholders). Los overrides con credenciales
+# reales quedan fuera del repo (Development/Production/Local) -> usar User Secrets o estos ficheros.
 appsettings.Production.json
+appsettings.Development.json
 appsettings.*.Local.json

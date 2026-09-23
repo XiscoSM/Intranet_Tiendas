@@ -122,6 +122,15 @@
     }
     function enter() {
         if (!current) return;
+        // Behave like a physical Enter: if a page handler cancels it (e.g. moving
+        // from user to password), follow the focus and keep the keyboard open there.
+        var ev = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true, cancelable: true });
+        if (!current.dispatchEvent(ev)) {
+            var next = document.activeElement;
+            if (next && next !== current && next.closest && next.closest('.vk-field')) open(next);
+            else close();
+            return;
+        }
         var form = current.form;
         close();
         if (form) { if (form.requestSubmit) form.requestSubmit(); else form.submit(); }
@@ -146,7 +155,10 @@
         return im === 'text' || i.getAttribute('data-vk') === 'abc';
     }
     function labelOf(i) {
-        var lab = (i.id && document.querySelector('label[for="' + i.id + '"]')) || i.closest('label');
+        // Associated <label>, then an enclosing one, then a <label> right before the field.
+        var prev = (i.closest('.vk-field') || i).previousElementSibling;
+        var lab = (i.id && document.querySelector('label[for="' + i.id + '"]')) || i.closest('label') ||
+            (prev && prev.tagName === 'LABEL' ? prev : null);
         var t = lab ? lab.textContent : (i.getAttribute('placeholder') || i.name || '');
         return (t || '').replace(/\s+/g, ' ').trim().slice(0, 40);
     }
@@ -157,6 +169,11 @@
         var wrap = document.createElement('span');
         wrap.className = 'vk-field' + (input.closest('.login-box') ? ' vk-field--block' : '');
         input.parentNode.insertBefore(wrap, input);
+        // The wrapper takes over the input's margins so its height matches the
+        // input box and the icon stays vertically centred on it.
+        var cs = getComputedStyle(input);
+        wrap.style.margin = cs.marginTop + ' ' + cs.marginRight + ' ' + cs.marginBottom + ' ' + cs.marginLeft;
+        input.style.margin = '0';
         wrap.appendChild(input);
         input.classList.add('vk-on');
         var btn = document.createElement('button');

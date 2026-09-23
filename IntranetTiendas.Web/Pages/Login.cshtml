@@ -7,9 +7,9 @@
 <div class="login-box">
     <img src="~/img/logo_hipercentro.svg" alt="Hipercentro" class="login-logo" />
     <form method="post">
-        <label class="normal">Usuario</label>
-        <input type="text" inputmode="numeric" asp-for="Usuario" autofocus autocomplete="username" />
-        <label class="normal">Contraseña</label>
+        <label class="normal" for="Usuario">Usuario</label>
+        <input type="text" inputmode="numeric" asp-for="Usuario" data-enter-next="#Password" autofocus autocomplete="username" />
+        <label class="normal" for="Password">Contraseña</label>
         <input type="password" inputmode="numeric" asp-for="Password" autocomplete="current-password" />
         @if (!string.IsNullOrEmpty(Model.Error))
         {

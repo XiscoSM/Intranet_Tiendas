@@ -32,3 +32,15 @@ function compruebaExtension(form, archivo) {
     form.submit();
     return true;
 }
+
+// Enter on a field marked data-enter-next="<selector>" moves focus to that field
+// instead of submitting the form (e.g. login: user -> password).
+document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var sel = e.target && e.target.getAttribute && e.target.getAttribute('data-enter-next');
+    if (!sel) return;
+    var next = document.querySelector(sel);
+    if (!next) return;
+    e.preventDefault();
+    next.focus();
+});
